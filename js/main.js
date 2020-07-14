@@ -28,6 +28,11 @@
       if(currentNum === parseInt(this.el.textContent, 10)){
         this.el.classList.add('pressed');
         currentNum ++;
+
+        // 4つの数字が全て選択されたらタイマーストップ
+        if(currentNum === 4){
+          clearInterval(timeoutId);
+        }
       }
     }
   }
@@ -67,13 +72,49 @@
 
   }
     
-  const board = new Board();
+  
 
-  let currentNum = 0;
+  class Game{
+    constructor(){
+      this.board = new Board();
 
-  const btn = document.getElementById('btn');
-  btn.addEventListener('click', ()=>{
-    // boardクラスのactivateメソッド
-    board.activate();
-  })
+      this.currentNum = undefined;
+      this.startTime = undefined;
+      this.timeoutId = undefined;
+
+      const btn = document.getElementById('btn');
+      btn.addEventListener('click', ()=>{
+        this.start();
+      });
+    }
+
+    start(){
+      // スタートボタン連打時のsettimerの重複を防止
+        // timeoutIdの値がundifindでない場合もタイマーをストップ
+        if(typeof this.timeoutId !== 'undefined'){
+          clearTimeout(this.timeoutId);
+        }
+      
+        this.currentNum = 0;
+        // boardクラスのactivateメソッド
+        board.activate();
+        this.startTime = Date.now();
+        this.runTimer();
+    }
+
+    // タイマー表示
+    runTimer(){
+      const timer = document.getElementById('timer');
+      timer.textContent = ((Date.now()-this.startTime) / 1000).toFixed(2);
+
+      // settimeoutの起動
+      // setTimerの返り値にtimeoutIdを指定
+      this.timeoutId = setTimeout(()=>{
+        this.runTimer();
+      }, 10);
+    }
+  }
+
+  new Game();
+
 }
