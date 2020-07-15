@@ -149,6 +149,6 @@
 
   }
 
-  new Game(5);
+  new Game(10);
 
 }
